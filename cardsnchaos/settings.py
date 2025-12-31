@@ -118,7 +118,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True if DEBUG else False
 
 # Get CORS origins from environment variable or use defaults
-cors_origins_str = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000')
+cors_origins_str = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000,https://cnc-nfndkwav.deployra.app')
 CORS_ALLOWED_ORIGINS = cors_origins_str.split(',') if not DEBUG and cors_origins_str else []
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -135,7 +135,7 @@ CORS_ALLOW_HEADERS = [
 ]
 
 # CSRF Configuration - trust all origins in development
-csrf_origins_str = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://localhost:3000')
+csrf_origins_str = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://localhost:3000,https://cnc-nfndkwav.deployra.app')
 CSRF_TRUSTED_ORIGINS = csrf_origins_str.split(',') if csrf_origins_str else []
 
 # In development, disable CSRF for cross-origin requests
