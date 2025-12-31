@@ -30,10 +30,6 @@ if ! python manage.py collectstatic --noinput; then
 fi
 
 echo ""
-echo "Creating superuser if none exists..."
-python manage.py create_superuser_if_none || echo "WARNING: Superuser creation had issues, continuing anyway..."
-
-echo ""
 echo "======================================"
 echo "Starting Daphne server on 0.0.0.0:8000..."
 echo "======================================"
