@@ -151,7 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True if DEBUG else False
 
 # Get CORS origins from environment variable or use defaults
-cors_origins_str = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000,https://cnc-nfndkwav.deployra.app')
+cors_origins_str = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000,https://cnc-nfndkwav.deployra.app,https://cards-n-chaos.vercel.app')
 CORS_ALLOWED_ORIGINS = cors_origins_str.split(',') if not DEBUG and cors_origins_str else []
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -165,6 +165,7 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
     "x-user-id",  # Custom header for user authentication
+    "ngrok-skip-browser-warning",  # Skip ngrok browser warning
 ]
 
 # CSRF Configuration - trust origins
@@ -174,7 +175,7 @@ csrf_defaults = 'http://localhost:5173,http://localhost:3000'
 if not DEBUG:
     # In production, you MUST set CSRF_TRUSTED_ORIGINS environment variable
     # to include both your backend and frontend URLs
-    csrf_defaults += ',https://cnc-nfndkwav.deployra.app'
+    csrf_defaults += ',https://cnc-nfndkwav.deployra.app,https://cards-n-chaos.vercel.app,https://uninjuring-raguel-untaintable.ngrok-free.dev'
 
 csrf_origins_str = os.environ.get('CSRF_TRUSTED_ORIGINS', csrf_defaults)
 CSRF_TRUSTED_ORIGINS = csrf_origins_str.split(',') if csrf_origins_str else []
