@@ -29,9 +29,12 @@ if ! python manage.py collectstatic --noinput; then
     exit 1
 fi
 
+# Use PORT environment variable if set (required by many cloud platforms)
+PORT="${PORT:-8000}"
+
 echo ""
 echo "======================================"
-echo "Starting Daphne server on 0.0.0.0:8000..."
+echo "Starting Daphne server on 0.0.0.0:${PORT}..."
 echo "======================================"
-echo "Executing: daphne -v 2 -b 0.0.0.0 -p 8000 cardsnchaos.asgi:application"
-exec daphne -v 2 -b 0.0.0.0 -p 8000 cardsnchaos.asgi:application
+echo "Executing: daphne -v 2 -b 0.0.0.0 -p ${PORT} cardsnchaos.asgi:application"
+exec daphne -v 2 -b 0.0.0.0 -p ${PORT} cardsnchaos.asgi:application

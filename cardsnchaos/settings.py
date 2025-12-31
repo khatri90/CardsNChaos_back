@@ -179,16 +179,19 @@ if not DEBUG:
 csrf_origins_str = os.environ.get('CSRF_TRUSTED_ORIGINS', csrf_defaults)
 CSRF_TRUSTED_ORIGINS = csrf_origins_str.split(',') if csrf_origins_str else []
 
-# In development, disable CSRF for cross-origin requests
+# CSRF cookie settings
 if DEBUG:
     CSRF_COOKIE_SAMESITE = 'None'
     CSRF_COOKIE_SECURE = False
+else:
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SECURE = True
 
 # Session Configuration (for anonymous auth)
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 86400 * 30  # 30 days
 SESSION_COOKIE_SAMESITE = 'None' if DEBUG else 'Lax'  # None needed for cross-origin WebSocket
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = not DEBUG  # True in production with HTTPS
 SESSION_COOKIE_HTTPONLY = True
 
 # REST Framework Configuration
