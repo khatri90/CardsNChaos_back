@@ -3,6 +3,7 @@ Django settings for cardsnchaos project.
 """
 
 import os
+import re
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -15,7 +16,18 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-cards-n-chaos-dev-key
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # ALLOWED_HOSTS
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if not DEBUG else ['*']
+# Allow internal IPs from container network (10.x.x.x) for health checks
+# In production, add your domain via ALLOWED_HOSTS environment variable
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = allowed_hosts_env.split(',')
+else:
+    # Default: allow localhost and all 10.x.x.x IPs (common in container networks)
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.deployra.com'] if not DEBUG else ['*']
+
+# Allow any host starting with 10. (internal container network)
+# This is safe because external traffic goes through the load balancer
+ALLOWED_HOSTS.append(re.compile(r'^10\.\d+\.\d+\.\d+$'))
 
 
 # Application definition
