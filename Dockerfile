@@ -21,9 +21,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
-# Run database migrations and collect static files
+# Run database migrations, collect static files, and create superuser
 RUN python manage.py migrate --noinput || true && \
-    python manage.py collectstatic --noinput || true
+    python manage.py collectstatic --noinput || true && \
+    python manage.py create_superuser_if_none || true
 
 # Expose port 8000
 EXPOSE 8000
