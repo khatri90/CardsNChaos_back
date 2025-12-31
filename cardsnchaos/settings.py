@@ -103,12 +103,14 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS Configuration
+# Allow all origins in development for network access (phone, tablet, etc.)
+CORS_ALLOW_ALL_ORIGINS = True if DEBUG else False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:3000",
-]
+] if not DEBUG else []
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -122,6 +124,19 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
     "x-user-id",  # Custom header for user authentication
 ]
+
+# CSRF Configuration - trust all origins in development
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+] if not DEBUG else []
+
+# In development, disable CSRF for cross-origin requests
+if DEBUG:
+    CSRF_COOKIE_SAMESITE = 'None'
+    CSRF_COOKIE_SECURE = False
 
 # Session Configuration (for anonymous auth)
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
