@@ -37,4 +37,5 @@ echo ""
 echo "======================================"
 echo "Starting Daphne server on 0.0.0.0:8000..."
 echo "======================================"
-exec daphne -b 0.0.0.0 -p 8000 cardsnchaos.asgi:application
+echo "Executing: daphne -v 2 -b 0.0.0.0 -p 8000 cardsnchaos.asgi:application"
+exec daphne -v 2 -b 0.0.0.0 -p 8000 cardsnchaos.asgi:application
