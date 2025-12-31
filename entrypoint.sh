@@ -31,10 +31,7 @@ fi
 
 echo ""
 echo "Creating superuser if none exists..."
-if ! python manage.py create_superuser_if_none; then
-    echo "ERROR: Superuser creation failed!"
-    exit 1
-fi
+python manage.py create_superuser_if_none || echo "WARNING: Superuser creation had issues, continuing anyway..."
 
 echo ""
 echo "======================================"
