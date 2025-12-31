@@ -89,8 +89,18 @@ if DATABASE_URL:
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
+            ssl_require=True,
         )
     }
+    # Add connection timeout and SSL settings for Aiven/production databases
+    DATABASES['default']['OPTIONS'] = {
+        'connect_timeout': 10,
+        'options': '-c statement_timeout=30000',
+    }
+    # Ensure SSL is required if not already in the URL
+    if 'sslmode' not in DATABASE_URL.lower():
+        DATABASES['default'].setdefault('OPTIONS', {})
+        DATABASES['default']['OPTIONS']['sslmode'] = 'require'
 else:
     # Development: Use SQLite
     DATABASES = {

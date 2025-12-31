@@ -9,6 +9,10 @@ if [ -z "$DATABASE_URL" ]; then
     echo "WARNING: DATABASE_URL not set, using SQLite"
 else
     echo "Using PostgreSQL database"
+    echo "Testing database connection..."
+    if ! python manage.py check --database default 2>&1 | head -20; then
+        echo "WARNING: Database check showed issues, but continuing..."
+    fi
 fi
 
 echo ""
