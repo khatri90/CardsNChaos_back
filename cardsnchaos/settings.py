@@ -134,8 +134,16 @@ CORS_ALLOW_HEADERS = [
     "x-user-id",  # Custom header for user authentication
 ]
 
-# CSRF Configuration - trust all origins in development
-csrf_origins_str = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://localhost:3000,https://cnc-nfndkwav.deployra.app')
+# CSRF Configuration - trust origins
+# IMPORTANT: Set CSRF_TRUSTED_ORIGINS environment variable to include your backend URL
+# Example: "https://your-backend.deployra.app,https://cnc-nfndkwav.deployra.app"
+csrf_defaults = 'http://localhost:5173,http://localhost:3000'
+if not DEBUG:
+    # In production, you MUST set CSRF_TRUSTED_ORIGINS environment variable
+    # to include both your backend and frontend URLs
+    csrf_defaults += ',https://cnc-nfndkwav.deployra.app'
+
+csrf_origins_str = os.environ.get('CSRF_TRUSTED_ORIGINS', csrf_defaults)
 CSRF_TRUSTED_ORIGINS = csrf_origins_str.split(',') if csrf_origins_str else []
 
 # In development, disable CSRF for cross-origin requests
