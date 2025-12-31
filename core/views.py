@@ -2,6 +2,8 @@
 REST API views for CardsNChaos.
 """
 
+import uuid
+
 from rest_framework import views, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -26,6 +28,11 @@ class AnonymousAuthView(views.APIView):
     """
     Creates or retrieves anonymous user session.
     Replaces Firebase Anonymous Auth.
+
+    If client provides a stored_uid from localStorage, we try to recover
+    that user and associate it with the current session. This handles
+    cases where the session cookie expired but the user still has their
+    UID in localStorage.
     """
     permission_classes = [AllowAny]
 
@@ -35,15 +42,52 @@ class AnonymousAuthView(views.APIView):
             request.session.create()
 
         session_key = request.session.session_key
+        stored_uid = request.data.get('stored_uid')
 
-        user, created = AnonymousUser.objects.get_or_create(
-            session_key=session_key
-        )
+        user = None
+        created = False
+        recovered = False
+
+        # Try to recover user from stored_uid if provided
+        if stored_uid:
+            try:
+                user = AnonymousUser.objects.get(id=stored_uid)
+                # Update their session_key to the current session
+                if user.session_key != session_key:
+                    # Check if another user already has this session_key
+                    existing_session_user = AnonymousUser.objects.filter(
+                        session_key=session_key
+                    ).exclude(id=stored_uid).first()
+
+                    if existing_session_user:
+                        # Delete the session-based user if they have no game data
+                        # (the stored_uid user is the "real" one with game history)
+                        if not existing_session_user.players.exists():
+                            existing_session_user.delete()
+                        else:
+                            # Both users have game data - orphan the session user
+                            # with a unique placeholder session key
+                            existing_session_user.session_key = f"orphaned_{uuid.uuid4()}"
+                            existing_session_user.save(update_fields=['session_key'])
+
+                    user.session_key = session_key
+                    user.save(update_fields=['session_key'])
+                    recovered = True
+            except AnonymousUser.DoesNotExist:
+                # stored_uid was invalid, will create new user below
+                pass
+
+        # If we couldn't recover, get or create by session
+        if user is None:
+            user, created = AnonymousUser.objects.get_or_create(
+                session_key=session_key
+            )
 
         return Response({
             'uid': str(user.id),
             'session_key': session_key,
-            'created': created
+            'created': created,
+            'recovered': recovered
         })
 
 
