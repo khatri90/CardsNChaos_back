@@ -21,13 +21,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
-# Run database migrations, collect static files, and create superuser
-RUN python manage.py migrate --noinput || true && \
-    python manage.py collectstatic --noinput || true && \
-    python manage.py create_superuser_if_none || true
+# Copy and make entrypoint script executable
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Expose port 8000
 EXPOSE 8000
 
-# Run Daphne server on 0.0.0.0:8000
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "cardsnchaos.asgi:application"]
+# Run entrypoint script which handles migrations, static files, superuser, and starts server
+CMD ["/entrypoint.sh"]
